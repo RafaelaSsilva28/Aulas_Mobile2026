@@ -7,11 +7,10 @@ function Cadastro ({navigation}){
             <Text style={{fontSize: 30}}>TELA DE CADASTRO</Text>
             {/*Nos botões, no onPress dizemos para qual tela queremos navegar*/}
             {/*Navegar para a pagina de Cadastro*/}
-            <Button title='Tela de Cadastro' onPress={() => navigation.navigate('Cadastro')}></Button>
-            {/*Nos botões, no onPress dizemos para qual tela queremos navegar*/}
-            {/*Navegar para a pagina de Cadastro*/}
             <Button title='Tela de Relatorio' onPress={() => navigation.navigate('Relatorio')}></Button>
-        </View>
+            <Button title='Voltar' onPress={() => navigation.goBack()}/>
+
+            </View>
     )
 }
 
