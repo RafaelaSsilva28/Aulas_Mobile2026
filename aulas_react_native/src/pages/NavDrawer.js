@@ -6,6 +6,11 @@ import Relatorio from './Relatorio'
 import Cadastro from './Cadastro'
 import Grafico from './Grafico'
 
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
+
 // criando nossa constante que cria o estilo de navegação Stack
 const Drawer = createDrawerNavigator()
 
@@ -26,10 +31,29 @@ function NavDrawer (){
             
         }}
             > 
-                <Drawer.Screen name='Home' component={Home}/>
-                <Drawer.Screen name='Cadastro' component={Cadastro}/>
-                <Drawer.Screen name='Relatorio' component={Relatorio}/>
-                <Drawer.Screen name='Grafico' component={Grafico}/>
+                <Drawer.Screen name='Home' component={Home}
+                options={{
+                    title: 'Tela Inicial de Teste',
+                    drawerIcon: ( {size, color} ) => <Ionicons name="home" size={24} color="black" />
+                }}/>
+                <Drawer.Screen name='Cadastro' component={Cadastro}
+                options={{
+                    title: 'Tela de Cadastro',
+                    drawerIcon: ( {size, color} ) => <Ionicons name="people-sharp" size={24} color="black" />
+                }}
+                />
+                <Drawer.Screen name='Relatorio' component={Relatorio}
+                options={{
+                    title: 'Tela de Relatorio de Teste',
+                    drawerIcon: ( {size, color} ) => <AntDesign name="diff" size={24} color="black" />
+                }}
+                />
+                <Drawer.Screen name='Grafico' component={Grafico}
+                options={{
+                    title: 'Tela de Grafico de Teste',
+                    drawerIcon: ( {size, color} ) => <FontAwesome name="pie-chart" size={size} color={color} />
+                }}
+                />
             </Drawer.Navigator>
         </NavigationContainer>
     )
