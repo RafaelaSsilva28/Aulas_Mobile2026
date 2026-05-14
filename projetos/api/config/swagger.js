@@ -568,7 +568,37 @@ const documentacao = {
                     }
                 }
             },
-        }
+        },
+        "/transacoes/total":{
+            get: {
+                tags:["Transações"],
+                summary: "Listar todas as transações",
+                description: "Retornaa a soma de todos os valores com base nos tipos informados E/S",
+                // security: [{bearerAuth: []}],
+                parameters: [{
+                    name: "tipo",
+                    in: 'query',
+                    required: true,
+                    description: "Tipo de transação E para Entrada S para Saida",
+                    schema:{type: "string", enum: ["E", "S"]},
+                    example:"E"
+                }],
+                responses: {
+                    200:{
+                        description: "Sucesso",
+                        content: {
+                            "application/json":{
+                                schema:{
+                                    type: "array",
+                                    items: {$ref: '#/components/schemas/Total_Transacoes'}
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+        },
     },
     components:{
         securitySchemes:{
@@ -692,7 +722,6 @@ const documentacao = {
                     id_subcategoria:{type:"integer"}
                 }
             },
-
             Atualizar_Transacao:{
                 type:'object',
                 properties:{
@@ -702,6 +731,17 @@ const documentacao = {
                     tipo:{type:"string"},
                     id_categoria:{type:"integer"},
                     id_subcategoria:{type:"integer"}
+                }
+            },
+            Total_Transacoes:{
+                type: "object",
+                properties: {
+                    total:{
+                        type: "number",
+                        format: "float",
+                        example: 1550.10,
+                        description: "Soma Total dos calores das transacoes filtradas"
+                    }
                 }
             }
 

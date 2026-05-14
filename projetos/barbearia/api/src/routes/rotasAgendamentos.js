@@ -3,9 +3,6 @@ import { BD } from "../../db.js";
 
 const router = Router();
 
-const SECRET_KEY = 'sua_chave_secreta';
-
-
 
 // ======================================
 // 1. LISTAR AGENDAMENTOS
@@ -17,14 +14,16 @@ router.get('/agendamentos', async (req, res) => {
 
         const query = `
             SELECT
-                id_agendamento,
-                nome_cliente,
-                nome_servico,
-                data_agendamento,
-                horario,
-                status
-            FROM agendamentos
-            ORDER BY id_agendamento
+                a.id_agendamento,
+                u.nome AS cliente,
+                s.nome_servico,
+                a.data_hora
+            FROM agendamentos a
+            INNER JOIN usuarios u
+                ON a.id_cliente = u.id_cliente
+            INNER JOIN servicos s
+                ON a.id_servico = s.id_servico
+            ORDER BY a.id_agendamento
         `;
 
         const agendamentos = await BD.query(query);
@@ -33,7 +32,7 @@ router.get('/agendamentos', async (req, res) => {
 
     } catch (error) {
 
-        console.error('Erro ao listar agendamentos:', error.message);
+        console.error(error);
 
         return res.status(500).json({
             error: 'Erro ao listar agendamentos'
@@ -50,21 +49,18 @@ router.get('/agendamentos', async (req, res) => {
 router.post('/agendamentos', async (req, res) => {
 
     const {
-        nome_cliente,
-        nome_servico,
-        data_agendamento,
-        horario,
-        status = 'Pendente'
+        id_cliente,
+        id_servico,
+        data_hora
     } = req.body;
 
     if (
-        !nome_cliente ||
-        !nome_servico ||
-        !data_agendamento ||
-        !horario
+        !id_cliente ||
+        !id_servico ||
+        !data_hora
     ) {
         return res.status(400).json({
-            error: "Todos os campos são obrigatórios."
+            error: 'Todos os campos são obrigatórios'
         });
     }
 
@@ -73,32 +69,28 @@ router.post('/agendamentos', async (req, res) => {
         const comando = `
             INSERT INTO agendamentos
             (
-                nome_cliente,
-                nome_servico,
-                data_agendamento,
-                horario,
-                status
+                id_cliente,
+                id_servico,
+                data_hora
             )
-            VALUES ($1, $2, $3, $4, $5)
+            VALUES ($1, $2, $3)
         `;
 
         const valores = [
-            nome_cliente,
-            nome_servico,
-            data_agendamento,
-            horario,
-            status
+            id_cliente,
+            id_servico,
+            data_hora
         ];
 
         await BD.query(comando, valores);
 
         return res.status(201).json({
-            message: "Agendamento cadastrado com sucesso."
+            message: 'Agendamento cadastrado com sucesso'
         });
 
     } catch (error) {
 
-        console.error('Erro ao cadastrar agendamento:', error.message);
+        console.error(error);
 
         return res.status(500).json({
             error: 'Erro ao cadastrar agendamento'
@@ -117,68 +109,63 @@ router.put('/agendamentos/:id_agendamento', async (req, res) => {
     const { id_agendamento } = req.params;
 
     const {
-        nome_cliente,
-        nome_servico,
-        data_agendamento,
-        horario,
-        status
+        id_cliente,
+        id_servico,
+        data_hora
     } = req.body;
 
     if (
-        !nome_cliente ||
-        !nome_servico ||
-        !data_agendamento ||
-        !horario ||
-        !status
+        !id_cliente ||
+        !id_servico ||
+        !data_hora
     ) {
         return res.status(400).json({
-            error: "Todos os campos são obrigatórios."
+            error: 'Todos os campos são obrigatórios'
         });
     }
 
     try {
 
-        // Verifica se existe
-        const verificarAgendamento = await BD.query(
-            `SELECT * FROM agendamentos WHERE id_agendamento = $1`,
+        const verificar = await BD.query(
+            `
+            SELECT *
+            FROM agendamentos
+            WHERE id_agendamento = $1
+            `,
             [id_agendamento]
         );
 
-        if (verificarAgendamento.rows.length === 0) {
+        if (verificar.rows.length === 0) {
             return res.status(404).json({
-                message: 'Agendamento não encontrado'
+                error: 'Agendamento não encontrado'
             });
         }
 
         const comando = `
             UPDATE agendamentos
             SET
-                nome_cliente = $1,
-                nome_servico = $2,
-                data_agendamento = $3,
-                horario = $4,
-                status = $5
-            WHERE id_agendamento = $6
+                id_cliente = $1,
+                id_servico = $2,
+                data_hora = $3
+            WHERE id_agendamento = $4
         `;
 
         const valores = [
-            nome_cliente,
-            nome_servico,
-            data_agendamento,
-            horario,
-            status,
+            id_cliente,
+            id_servico,
+            data_hora,
             id_agendamento
         ];
 
         await BD.query(comando, valores);
 
         return res.status(200).json({
-            message: 'Agendamento atualizado com sucesso!'
+            message: 'Agendamento atualizado com sucesso'
         });
 
     } catch (error) {
 
-        console.error('ERRO DETALHADO:', error);
+        console.error(error);
 
         return res.status(500).json({
             error: 'Erro ao atualizar agendamento'
@@ -198,35 +185,40 @@ router.delete('/agendamentos/:id_agendamento', async (req, res) => {
 
     try {
 
-        // Verifica se existe
-        const verificarAgendamento = await BD.query(
-            `SELECT * FROM agendamentos WHERE id_agendamento = $1`,
+        const verificar = await BD.query(
+            `
+            SELECT *
+            FROM agendamentos
+            WHERE id_agendamento = $1
+            `,
             [id_agendamento]
         );
 
-        if (verificarAgendamento.rows.length === 0) {
+        if (verificar.rows.length === 0) {
+
             return res.status(404).json({
-                message: 'Agendamento não encontrado'
+                error: 'Agendamento não encontrado'
             });
         }
 
-        const comando = `
+        await BD.query(
+            `
             DELETE FROM agendamentos
             WHERE id_agendamento = $1
-        `;
-
-        await BD.query(comando, [id_agendamento]);
+            `,
+            [id_agendamento]
+        );
 
         return res.status(200).json({
-            message: "Agendamento removido com sucesso"
+            message: 'Agendamento removido com sucesso'
         });
 
     } catch (error) {
 
-        console.error('Erro ao deletar agendamento:', error.message);
+        console.error(error);
 
         return res.status(500).json({
-            message: "Erro interno no servidor"
+            error: 'Erro ao deletar agendamento'
         });
     }
 });
