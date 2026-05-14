@@ -8,6 +8,7 @@ function Relatorio ({navigation}){
             {/*Nos botões, no onPress dizemos para qual tela queremos navegar*/}
             {/*Navegar para a pagina de Cadastro*/}
             <Button title='Tela de Cadastro' onPress={() => navigation.navigate('Cadastro')}></Button>
+            <Button title='Tela de Grafico' onPress={() => navigation.navigate('Grafico')}></Button>
             <Button title='Voltar' onPress={() => navigation.goBack()}/>
         </View>
     )

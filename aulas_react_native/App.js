@@ -15,10 +15,12 @@
 //   );
 // }
 
-import NavStack from "./src/pages/NavStack";
+import NavDrawer from "./src/pages/NavDrawer";
+// import NavStack from "./src/pages/NavStack";
 
 export default function App (){
   return(
-    <NavStack/>
+    // <NavStack/>
+    <NavDrawer/>
   )
 }
