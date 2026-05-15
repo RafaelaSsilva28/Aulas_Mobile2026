@@ -1,6 +1,5 @@
 import { View, Text, FlatList } from "react-native";
 import Hr from './Hr'
-import Aula05 from "./Aula05";
 
     const Aula05 = () => {
         return(
