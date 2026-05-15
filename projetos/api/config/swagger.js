@@ -599,6 +599,35 @@ const documentacao = {
             },
 
         },
+        "/dashboard/categorias":{
+            get: {
+                tags:["Dashboard"],
+                summary: "Total de gastos por categoria",
+                description: "Retornaa a soma das saidas agrupadas por categoria para o grafico",
+                // security: [{bearerAuth: []}],
+                parameters: [{
+                    name: "tipo",
+                    in: 'query',
+                    required: true,
+                    description: "Tipo de transação E para Entrada S para Saida",
+                    schema:{type: "string", enum: ["E", "S"]},
+                    example:"E"
+                }],
+                responses: {
+                    200:{
+                        description: "Sucesso",
+                        content: {
+                            "application/json":{
+                                schema:{
+                                    type: "array",
+                                    items: {$ref: '#/components/schemas/Dashboard_Categoria'}
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        }
     },
     components:{
         securitySchemes:{
@@ -743,9 +772,26 @@ const documentacao = {
                         description: "Soma Total dos calores das transacoes filtradas"
                     }
                 }
+            },
+            Dashboard_Categoria:{
+               type: "object",
+                properties: {
+                    nome: {
+                        type: "string",
+                        example: "Alimentação"
+                    },
+                    total:{
+                        type: "number",
+                        format: "float",
+                        example: 1550.10,
+                    }
+                } 
             }
 
         }
     }
 }
 export default documentacao
+
+
+
