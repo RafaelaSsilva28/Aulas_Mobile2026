@@ -60,6 +60,6 @@ const Aula02 = () => {
 const estilos = StyleSheet.create({ 
     botao: { backgroundColor:'#fb00d1', padding: 12, borderRadius: 8, alignItems: 'center' },
     botaoTexto: { color: '#fff', fontSize: 16, fontWeight: 'bold' }
- })
+})
 
 export default Aula02
